@@ -8,9 +8,6 @@ from torch.nn import CrossEntropyLoss
 from transformers import BertModel, BertTokenizer, BertPreTrainedModel, BertConfig, Trainer, TrainingArguments
 from transformers.modeling_outputs import SequenceClassifierOutput
 
-wandb.login(key="540c7e59de90ce2fc694c3658dd3caa0e9b9fb33", relogin=True)
-wandb.init(project="dummy_wandb", config=dict(learning_rate=5e-5))
-
 
 class Classifier(nn.Module):
     def __init__(self, hidden_size, n_class):
@@ -68,6 +65,11 @@ class BertCollactor(object):
         tokenizer = self.tokenizer
         input_ids = torch.nn.utils.rnn.pad_sequence(input_ids, batch_first=True, padding_value=tokenizer.pad_token_id)
         return dict(input_ids=input_ids, labels=labels, attention_mask=input_ids.ne(tokenizer.pad_token_id))
+   
+    
+@dataclass
+class ModelArguments:
+    project: str
 
 
 def make_datamodule(tokenizer):
@@ -82,8 +84,10 @@ def make_datamodule(tokenizer):
 
 
 def train():
-    parser = transformers.HfArgumentParser((TrainingArguments))
-    training_args = parser.parse_yaml_file("/mnt/bn/magellan-product-audit/botianjiang/code/Dummy/test.yaml")[0]
+    parser = transformers.HfArgumentParser((ModelArguments, TrainingArguments))
+    model_args, training_args = parser.parse_yaml_file("./test.yaml")
+    wandb.login(key="540c7e59de90ce2fc694c3658dd3caa0e9b9fb33", relogin=True)
+    wandb.init(project=model_args.project, name=training_args.run_name)
     config = BertClassifierConfig.from_pretrained("google-bert/bert-base-uncased")
     config.set_class(4)
     tokenizer = BertTokenizer.from_pretrained("google-bert/bert-base-uncased")

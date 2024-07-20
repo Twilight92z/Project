@@ -1,21 +1,22 @@
 # training_args
-output_dir: /mnt/bn/magellan-product-audit/botianjiang/checkpoint/Dummy
-per_device_train_batch_size: 1
-per_device_eval_batch_size: 1
+output_dir: TOFILL
+per_device_train_batch_size: 32
+per_device_eval_batch_size: 32
 gradient_accumulation_steps: 1
 
-learning_rate: 0.00005
+learning_rate: 0.00001
 lr_scheduler_type: cosine
 weight_decay: 0
 warmup_ratio: 0.01
 
 num_train_epochs: 20.0
 logging_steps: 1
-save_steps: 100
+save_steps: 10000
 save_total_limit: 2
 
 fp16: True
 report_to: wandb
-run_name: dummy
+run_name: TOFILL
+project: dummy_wandb
 dataloader_num_workers: 12
 gradient_checkpointing: True
